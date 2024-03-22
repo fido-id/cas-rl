@@ -15,14 +15,14 @@ LOAD_STATE = True
 now = time.strftime("%Y%m%d-%H%M")
 store_path = ROOT_DIR + f"/statics/states/{now}"
 
-load_path = ROOT_DIR + f"/statics/states/20240322-1419"
+load_path = ROOT_DIR + f"/statics/states/20240322-1626"
 
 pygame.init()
 pygame.display.set_caption("Collision Avoidance Simulation")
 window = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 clock = pygame.time.Clock()
 
-reward_function = Reward(positive_reward=100, negative_reward=-100, no_op_reward=-1)
+reward_function = Reward(positive_reward=100, negative_reward=-100, no_op_reward=-10)
 
 agent = Agent(size=AGENT_SIZE)
 obstacles = Obstacles(
@@ -60,14 +60,13 @@ for episode in range(EPISODES):
 
         if Outcome.WIN.value in iteration_outcome:
             statistics.n_win += 1
+            statistics.episode_durations_win.append(episode_duration)
             break
         if Outcome.OOO.value in iteration_outcome:
             statistics.n_ooo += 1
             break
 
         episode_duration += 1
-
-    statistics.episode_durations.append(episode_duration)
 
 environment.save_rl_state(store_path)
 

@@ -1,3 +1,4 @@
+import numpy as np
 import pygame
 
 from casrl.const import WHITE, RED, BLACK, SCREEN_WIDTH, SCREEN_HEIGHT, GRID_WIDTH, GRID_HEIGHT
@@ -46,7 +47,7 @@ class Environment:
         self.window.blit(self.font.render(f"Number DOWN: {statistics.n_of_down_action}", True, BLACK), (0, 100))
         self.window.blit(self.font.render(f"Number WIN: {statistics.n_win}", True, BLACK), (0, 120))
         self.window.blit(self.font.render(f"Number OOO: {statistics.n_ooo}", True, BLACK), (0, 140))
-        self.window.blit(self.font.render(f"Episode duration: {max(statistics.episode_durations)}", True, BLACK), (0, 160))
+        self.window.blit(self.font.render(f"Average Episode Duration in WIN: {round(np.average(statistics.episode_durations_win[:-10]), 2)}", True, BLACK), (0, 160))
         pygame.display.flip()
 
     def save_rl_state(self, path):

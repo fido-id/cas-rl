@@ -1,8 +1,11 @@
+import math
+
 import numpy as np
 
 from casrl.action import Action
 from casrl.entity.position import Position
 from casrl.const import MOVEMENT_OFFSET, GRID_WIDTH, GRID_HEIGHT
+
 
 class QLearning:
 
@@ -13,8 +16,8 @@ class QLearning:
         learning_rate: float = 0.1,
         discount_factor: float = 0.9
     ):
-        self.qtable = np.zeros((360, n_possible_actions),
-                               dtype=np.float16)
+        self.qtable = np.zeros((360, math.ceil((GRID_WIDTH**2 + GRID_HEIGHT**2)**(1/2)), n_possible_actions),
+                               dtype=np.float32)
         self.exploration_rate = exploration_rate
         self.learning_rate = learning_rate
         self.discount_factor = discount_factor
@@ -23,11 +26,13 @@ class QLearning:
         angle = obstacle_position.angle_from(player_position)
         if angle == 360:
             angle = 0
+
+        distance = int(obstacle_position.distance(player_position))
         if np.random.rand() < self.exploration_rate:
             return np.random.choice(range(len(Action)))
         else:
             return np.argmax(
-                self.qtable[angle]
+                self.qtable[angle, distance]
             )
 
     def update_qtable(self, obstacle_position, player_position, action, reward, new_obstacle_position, is_terminal_state):
@@ -38,10 +43,12 @@ class QLearning:
         if new_angle == 360:
             new_angle = 0
 
-        max_expected_reward = self.discount_factor * np.max(self.qtable[new_angle])
+        distance = int(obstacle_position.distance(player_position))
+        new_distance = int(new_obstacle_position.distance(player_position))
+        max_expected_reward = self.discount_factor * np.max(self.qtable[new_angle, new_distance])
         if is_terminal_state:
             max_expected_reward = 0
-        self.qtable[angle, action] += self.learning_rate * (reward + max_expected_reward - self.qtable[angle, action])
+        self.qtable[angle, distance, action] += self.learning_rate * (reward + max_expected_reward - self.qtable[angle, distance, action])
 
     def store_qtable(self, path: str):
         np.save(path, self.qtable)

@@ -8,7 +8,7 @@ class Statistics:
     n_of_stay_action = 0
     n_of_up_action = 0
     n_of_down_action = 0
-    episode_durations = [0]
+    episode_durations_win = [0]
     n_win = 0
     n_ooo = 0
 
