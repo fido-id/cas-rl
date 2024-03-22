@@ -6,14 +6,17 @@ from casrl.action import Action
 from casrl.const import GRID_HEIGHT, GRID_WIDTH, MOVEMENT_OFFSET
 from casrl.entity.outcome import Outcome
 from casrl.entity.position import Position
+from casrl.entity.reward import Reward
 from casrl.entity.statistics import Statistics
-from casrl.qlearning import QLearning, QLearningOOO
+from casrl.qlearning import QLearning
 
 
 class Obstacle:
-    def __init__(self, x: int, y: int, size: int):
-        self.position = Position(x, y, size)
-        self.q = QLearningOOO(n_possible_actions=len(Action))
+    def __init__(self, size: int, reward_function: Reward):
+        self.position = None
+        self.size = size
+        self.reward_function = reward_function
+        self.q = QLearning(n_possible_actions=len(Action))
 
     def run_iteration(self, player_position: Position) -> bool:
         prev_position = copy.copy(self.position)
@@ -36,28 +39,33 @@ class Obstacle:
                 statistics.n_of_up_action += 1
                 pass
 
-        reward = 0
-        if (self.position.x <= 0 or self.position.x >= GRID_WIDTH - self.position.size or
-            self.position.y <= 0 or self.position.y >= GRID_HEIGHT - self.position.size):
-            # check if the obstacle went out of bound
-            reward = -100
-        elif self.position.overlaps(player_position):
-            # check for collision
-            reward = 100
+        reward, outcome = self.reward_function.compute_reward_and_outcome(self.position, player_position)
 
+        is_terminal_state = self.reward_function.is_terminal(reward)
         self.q.update_qtable(
-            prev_position, player_position, action, reward, self.position
+            prev_position, player_position, action, reward, self.position, is_terminal_state
         )
 
-        if reward == 100:
-            return Outcome.WIN.value
-        elif reward < -1:
-            return Outcome.OOO.value
+        return outcome.value
 
-        return Outcome.NOOP.value
+    def reset(self, agent_position: Position) -> None:
 
-    def reset(self, x: int, y: int) -> None:
-        self.position = Position(x, y, self.position.size)
+        # do not reset obstacle inside the agent
+        potential_y_positions = np.arange(1, GRID_HEIGHT - self.size)
+        agent_y_coordinates = np.arange(agent_position.y, agent_position.y + agent_position.size)
+        mask_y = np.isin(potential_y_positions, agent_y_coordinates)
+        potential_y_positions = potential_y_positions[~mask_y]
+
+        potential_x_positions = np.arange(1, GRID_WIDTH - self.size)
+        agent_x_coordinates = np.arange(agent_position.x, agent_position.x + agent_position.size)
+        mask_x = np.isin(potential_x_positions, agent_x_coordinates)
+        potential_x_positions = potential_x_positions[~mask_x]
+
+        self.position = Position(
+            np.random.choice(potential_x_positions),
+            np.random.choice(potential_y_positions),
+            self.size
+        )
 
     def save_qtable(self, path: str) -> None:
         self.q.store_qtable(path)

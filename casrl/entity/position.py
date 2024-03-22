@@ -1,3 +1,5 @@
+import math
+
 import numpy as np
 
 from casrl.const import GRID_WIDTH, GRID_HEIGHT
@@ -38,5 +40,11 @@ class Position:
                 self.y + self.size >= other.y and self.y <= other.y + other.size:
             return True
         return False
+
+    def angle_from(self, other: 'Position') -> int:
+        return int(math.degrees(math.atan2(
+            (self.y + int(self.size/2)) - (other.y + int(self.size/2)),
+            (self.x + int(self.size/2)) - (other.x + int(self.size/2)))
+        ) + 180)
 
 

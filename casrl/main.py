@@ -6,34 +6,41 @@ from casrl.entity.agent import Agent
 from casrl.entity.environment import Environment
 from casrl.entity.obstacles import Obstacles
 from casrl.entity.outcome import Outcome
+from casrl.entity.reward import Reward
 from casrl.entity.statistics import Statistics
 from const import SCREEN_WIDTH, EPISODES, OBSTACLE_SIZE, AGENT_SIZE, SCREEN_HEIGHT, GRID_WIDTH, GRID_HEIGHT, ROOT_DIR
 
+LOAD_STATE = True
 
 now = time.strftime("%Y%m%d-%H%M")
 store_path = ROOT_DIR + f"/statics/states/{now}"
 
-load_path = ROOT_DIR + f"/statics/states/20240322-0841"
+load_path = ROOT_DIR + f"/statics/states/20240322-1419"
 
 pygame.init()
 pygame.display.set_caption("Collision Avoidance Simulation")
 window = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 clock = pygame.time.Clock()
 
+reward_function = Reward(positive_reward=100, negative_reward=-100, no_op_reward=-1)
+
+agent = Agent(size=AGENT_SIZE)
 obstacles = Obstacles(
-    n_obstacles=1, obstacle_size=OBSTACLE_SIZE
+    n_obstacles=1, obstacle_size=OBSTACLE_SIZE, reward_function=reward_function
 )
-agent = Agent(initial_x=int(GRID_WIDTH / 2), initial_y=15, size=AGENT_SIZE)
 
 environment = Environment(obstacles, agent, window)
 
-environment.load_rl_state(load_path)
+if LOAD_STATE:
+    environment.load_rl_state(load_path)
 
 statistics = Statistics.instance()
 
 for episode in range(EPISODES):
-    agent.reset()
-    obstacles.reset()
+    if episode % 10 == 0:
+        agent.reset()
+
+    obstacles.reset(agent_position=agent.position)
 
     statistics.episode = episode
     episode_duration = 0
@@ -48,7 +55,7 @@ for episode in range(EPISODES):
         keys = pygame.key.get_pressed()
 
         environment.visualize_environment()
-        agent.run_episode(keys)
+        agent.run_iteration(keys)
         iteration_outcome = obstacles.run_iteration(agent.position)
 
         if Outcome.WIN.value in iteration_outcome:

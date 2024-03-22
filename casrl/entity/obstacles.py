@@ -5,12 +5,14 @@ import numpy as np
 from casrl.const import GRID_WIDTH, GRID_HEIGHT
 from casrl.entity.obstacle import Obstacle
 from casrl.entity.position import Position
+from casrl.entity.reward import Reward
 
 
 class Obstacles:
-    def __init__(self, n_obstacles: int, obstacle_size: int):
+    def __init__(self, n_obstacles: int, obstacle_size: int, reward_function: Reward):
+
         self.obstacles = [
-            Obstacle(np.random.randint(0, GRID_WIDTH), int(GRID_HEIGHT / 3), obstacle_size)
+            Obstacle(obstacle_size, reward_function)
             for _ in range(n_obstacles)
         ]
         self.obstacle_size = obstacle_size
@@ -22,12 +24,9 @@ class Obstacles:
 
         return outcomes
 
-    def reset(self):
+    def reset(self, agent_position: Position):
         for obstacle in self.obstacles:
-            obstacle.reset(
-                np.random.randint(1, GRID_WIDTH - self.obstacle_size),
-                np.random.randint(1, GRID_HEIGHT - self.obstacle_size)
-            )
+            obstacle.reset(agent_position)
 
     def save_qtables(self, root_path):
         os.makedirs(root_path, exist_ok=True)

@@ -1,3 +1,4 @@
+import numpy as np
 import pygame
 
 from casrl.const import MOVEMENT_OFFSET, GRID_HEIGHT, GRID_WIDTH, AGENT_SIZE
@@ -7,14 +8,12 @@ OFFSET = 1
 
 
 class Agent:
-    def __init__(self, initial_x: int, initial_y: int, size: int):
-        self.initial_x = initial_x
-        self.initial_y = initial_y
+    def __init__(self, size: int):
         self.size = size
-        self.position = Position(initial_x, initial_y, size)
-        self.size = size
+        self.position = None
+        self.reset()
 
-    def run_episode(self, keys):
+    def run_iteration(self, keys):
         if keys[pygame.K_w]:
             self.position.y = max(self.position.y - MOVEMENT_OFFSET, 0)
         if keys[pygame.K_s]:
@@ -25,4 +24,8 @@ class Agent:
             self.position.x = min(self.position.x + MOVEMENT_OFFSET, GRID_WIDTH - self.size)
 
     def reset(self):
-        self.position = Position(self.initial_x, self.initial_y, self.size)
+        self.position = Position(
+            np.random.randint(1, GRID_WIDTH - self.size),
+            np.random.randint(1, GRID_HEIGHT - self.size),
+            self.size
+        )
