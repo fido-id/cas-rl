@@ -3,7 +3,7 @@ import copy
 import numpy as np
 
 from casrl.action import Action
-from casrl.const import GRID_HEIGHT, GRID_WIDTH, MOVEMENT_OFFSET
+from casrl.const import GRID_HEIGHT, GRID_WIDTH, MOVEMENT_OFFSET, CAS_THRESHOLD
 from casrl.entity.outcome import Outcome
 from casrl.entity.position import Position
 from casrl.entity.reward import Reward
@@ -18,7 +18,11 @@ class Obstacle:
         self.reward_function = reward_function
         self.q = QLearning(n_possible_actions=len(Action))
 
-    def run_iteration(self, player_position: Position) -> bool:
+    def run_iteration(self, player_position: Position) -> int:
+
+        if self.position.distance(player_position) > CAS_THRESHOLD:
+            return Outcome.NOOP.value
+
         prev_position = copy.copy(self.position)
         action = self.q.draw_action(self.position, player_position)
         statistics = Statistics.instance()
@@ -64,6 +68,13 @@ class Obstacle:
         self.position = Position(
             np.random.choice(potential_x_positions),
             np.random.choice(potential_y_positions),
+            self.size
+        )
+
+    def reset_to_fixed_pos(self) -> None:
+        self.position = Position(
+            np.random.randint(4, GRID_WIDTH - self.size - 4),
+            GRID_HEIGHT - 15,
             self.size
         )
 

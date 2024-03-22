@@ -29,3 +29,10 @@ class Agent:
             np.random.randint(1, GRID_HEIGHT - self.size),
             self.size
         )
+
+    def reset_to_fixed_pos(self) -> None:
+        self.position = Position(
+            np.random.randint(4, GRID_WIDTH - self.size - 4),
+            GRID_HEIGHT - 3,
+            self.size
+        )

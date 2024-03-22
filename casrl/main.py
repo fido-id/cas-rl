@@ -10,7 +10,7 @@ from casrl.entity.reward import Reward
 from casrl.entity.statistics import Statistics
 from const import SCREEN_WIDTH, EPISODES, OBSTACLE_SIZE, AGENT_SIZE, SCREEN_HEIGHT, GRID_WIDTH, GRID_HEIGHT, ROOT_DIR
 
-LOAD_STATE = True
+LOAD_STATE = False
 
 now = time.strftime("%Y%m%d-%H%M")
 store_path = ROOT_DIR + f"/statics/states/{now}"
@@ -25,9 +25,7 @@ clock = pygame.time.Clock()
 reward_function = Reward(positive_reward=100, negative_reward=-100, no_op_reward=-10)
 
 agent = Agent(size=AGENT_SIZE)
-obstacles = Obstacles(
-    n_obstacles=1, obstacle_size=OBSTACLE_SIZE, reward_function=reward_function
-)
+obstacles = Obstacles(n_obstacles=1, obstacle_size=OBSTACLE_SIZE, reward_function=reward_function)
 
 environment = Environment(obstacles, agent, window)
 
@@ -37,15 +35,13 @@ if LOAD_STATE:
 statistics = Statistics.instance()
 
 for episode in range(EPISODES):
-    if episode % 10 == 0:
-        agent.reset()
-
-    obstacles.reset(agent_position=agent.position)
+    agent.reset_to_fixed_pos()
+    obstacles.reset_to_fixed_pos()
 
     statistics.episode = episode
     episode_duration = 0
     while True:
-        dt = clock.tick(120)
+        dt = clock.tick(30)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -64,6 +60,9 @@ for episode in range(EPISODES):
             break
         if Outcome.OOO.value in iteration_outcome:
             statistics.n_ooo += 1
+            break
+        if Outcome.COL.value in iteration_outcome:
+            statistics.n_col += 1
             break
 
         episode_duration += 1

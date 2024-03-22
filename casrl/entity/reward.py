@@ -1,7 +1,7 @@
 import math
 from typing import Tuple
 
-from casrl.const import GRID_WIDTH, GRID_HEIGHT
+from casrl.const import GRID_WIDTH, GRID_HEIGHT, CAS_THRESHOLD
 from casrl.entity.outcome import Outcome
 from casrl.entity.position import Position
 
@@ -25,9 +25,9 @@ class Reward:
             return self.negative_reward, Outcome.OOO
         elif obstacle_position.overlaps(player_position):
             # check for collision
-            return self.positive_reward, Outcome.WIN
+            return self.negative_reward, Outcome.COL
+
         distance = obstacle_position.distance(player_position)
-        diagonal = math.ceil((GRID_WIDTH**2 + GRID_HEIGHT**2)**(1/2))
-        discounted_reward = distance / diagonal
-        return self.no_op_reward * discounted_reward, Outcome.NOOP
+        discounted_reward = distance / CAS_THRESHOLD
+        return self.positive_reward * discounted_reward, Outcome.NOOP
 

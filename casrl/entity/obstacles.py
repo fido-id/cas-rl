@@ -28,6 +28,10 @@ class Obstacles:
         for obstacle in self.obstacles:
             obstacle.reset(agent_position)
 
+    def reset_to_fixed_pos(self):
+        for obstacle in self.obstacles:
+            obstacle.reset_to_fixed_pos()
+
     def save_qtables(self, root_path):
         os.makedirs(root_path, exist_ok=True)
         for i, obstacle in enumerate(self.obstacles):

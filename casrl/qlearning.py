@@ -4,7 +4,7 @@ import numpy as np
 
 from casrl.action import Action
 from casrl.entity.position import Position
-from casrl.const import MOVEMENT_OFFSET, GRID_WIDTH, GRID_HEIGHT
+from casrl.const import MOVEMENT_OFFSET, GRID_WIDTH, GRID_HEIGHT, CAS_THRESHOLD
 
 
 class QLearning:
@@ -16,7 +16,7 @@ class QLearning:
         learning_rate: float = 0.1,
         discount_factor: float = 0.9
     ):
-        self.qtable = np.zeros((360, math.ceil((GRID_WIDTH**2 + GRID_HEIGHT**2)**(1/2)), n_possible_actions),
+        self.qtable = np.zeros((360, math.ceil((CAS_THRESHOLD**2 + CAS_THRESHOLD**2)**(1/2)), n_possible_actions),
                                dtype=np.float32)
         self.exploration_rate = exploration_rate
         self.learning_rate = learning_rate

@@ -11,6 +11,7 @@ class Statistics:
     episode_durations_win = [0]
     n_win = 0
     n_ooo = 0
+    n_col = 0
 
     def __init__(self):
         raise RuntimeError("Call instance() method instead")
