@@ -1,15 +1,13 @@
 import os
 
-import numpy as np
-
-from casrl.const import GRID_WIDTH, GRID_HEIGHT
 from casrl.entity.obstacle import Obstacle
 from casrl.entity.position import Position
-from casrl.entity.reward import Reward
+from casrl.reward.abstract_reward import AbstractReward
+from casrl.reward.reward_npc import RewardNPC
 
 
 class Obstacles:
-    def __init__(self, n_obstacles: int, obstacle_size: int, reward_function: Reward):
+    def __init__(self, n_obstacles: int, obstacle_size: int, reward_function: RewardNPC):
 
         self.obstacles = [
             Obstacle(obstacle_size, reward_function)
@@ -17,10 +15,10 @@ class Obstacles:
         ]
         self.obstacle_size = obstacle_size
 
-    def run_iteration(self, player_position: Position):
+    def run_iteration(self, player_position: Position, is_deployed: bool):
         outcomes = []
         for obstacle in self.obstacles:
-            outcomes.append(obstacle.run_iteration(player_position))
+            outcomes.append(obstacle.run_iteration(player_position, is_deployed))
 
         return outcomes
 

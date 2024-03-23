@@ -3,6 +3,7 @@ import math
 import numpy as np
 
 from casrl.const import GRID_WIDTH, GRID_HEIGHT
+from casrl.enums.action import Action
 
 
 class Position:
@@ -25,7 +26,7 @@ class Position:
         self.x = self.x + delta_x
         self.y = self.y + delta_y
 
-    def distance(self, other: 'Position'):
+    def distance_from(self, other: 'Position'):
         return np.sqrt(
             np.power(
                 self.x + int(self.size / 2) - (other.x + int(other.size / 2)), 2
@@ -35,7 +36,7 @@ class Position:
             )
         )
 
-    def overlaps(self, other: 'Position'):
+    def overlaps_with(self, other: 'Position'):
         if self.x + self.size >= other.x and self.x <= other.x + other.size and \
                 self.y + self.size >= other.y and self.y <= other.y + other.size:
             return True

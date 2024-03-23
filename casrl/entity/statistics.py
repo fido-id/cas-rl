@@ -10,8 +10,11 @@ class Statistics:
     n_of_down_action = 0
     episode_durations_win = [0]
     n_win = 0
-    n_ooo = 0
+    n_ooo_player = 0
+    n_ooo_npc = 0
     n_col = 0
+    n_iterations_before_collision = [0]
+    fps = 120
 
     def __init__(self):
         raise RuntimeError("Call instance() method instead")

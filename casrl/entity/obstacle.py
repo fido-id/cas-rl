@@ -1,31 +1,36 @@
 import copy
+import math
 
 import numpy as np
 
-from casrl.action import Action
+from casrl.enums.action import Action
 from casrl.const import GRID_HEIGHT, GRID_WIDTH, MOVEMENT_OFFSET, CAS_THRESHOLD
-from casrl.entity.outcome import Outcome
+from casrl.enums.outcome import Outcome
 from casrl.entity.position import Position
-from casrl.entity.reward import Reward
+from casrl.reward.abstract_reward import AbstractReward
 from casrl.entity.statistics import Statistics
 from casrl.qlearning import QLearning
+from casrl.reward.reward_npc import RewardNPC
 
 
 class Obstacle:
-    def __init__(self, size: int, reward_function: Reward):
+    def __init__(self, size: int, reward_function: RewardNPC):
         self.position = None
         self.size = size
         self.reward_function = reward_function
-        self.q = QLearning(n_possible_actions=len(Action))
+        self.q = QLearning(
+            state_size=(360,), n_possible_actions=len(Action)
+        )
+        
+        self.n_iterations_before_collision = 0
 
-    def run_iteration(self, player_position: Position) -> int:
-
-        if self.position.distance(player_position) > CAS_THRESHOLD:
+    def run_iteration(self, player_position: Position, is_deployed: bool) -> int:
+        if self.position.distance_from(player_position) > CAS_THRESHOLD:
             return Outcome.NOOP.value
 
-        prev_position = copy.copy(self.position)
-        action = self.q.draw_action(self.position, player_position)
         statistics = Statistics.instance()
+        prev_position = copy.copy(self.position)
+        action = self.q.draw_action(self.position, player_position, is_deployed=is_deployed)
         match action:
             case Action.RIGHT.value:
                 self.position.update(MOVEMENT_OFFSET, 0)
@@ -43,8 +48,14 @@ class Obstacle:
                 statistics.n_of_up_action += 1
                 pass
 
-        reward, outcome = self.reward_function.compute_reward_and_outcome(self.position, player_position)
-
+        reward, outcome = self.reward_function.compute_reward_and_outcome(prev_position, self.position, player_position)
+        
+        if outcome.value != Outcome.COL.value:
+            self.n_iterations_before_collision += 1
+        else:
+            statistics.n_iterations_before_collision.append(self.n_iterations_before_collision)
+            self.n_iterations_before_collision = 0
+        
         is_terminal_state = self.reward_function.is_terminal(reward)
         self.q.update_qtable(
             prev_position, player_position, action, reward, self.position, is_terminal_state
@@ -74,7 +85,7 @@ class Obstacle:
     def reset_to_fixed_pos(self) -> None:
         self.position = Position(
             np.random.randint(4, GRID_WIDTH - self.size - 4),
-            GRID_HEIGHT - 15,
+            GRID_HEIGHT - 12,
             self.size
         )
 
