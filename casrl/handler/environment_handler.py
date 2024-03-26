@@ -1,17 +1,16 @@
 import numpy as np
 import pygame
 
-from casrl.const import WHITE, BLACK, SCREEN_WIDTH, SCREEN_HEIGHT, GRID_WIDTH, GRID_HEIGHT
-from casrl.entity.agent.abstract_agent import AbstractAgent
-from casrl.entity.obstacles import Obstacles
-from casrl.entity.statistics import Statistics
-from casrl.enums.action import Action
+from casrl.utils.const import WHITE, BLACK, SCREEN_WIDTH, SCREEN_HEIGHT, GRID_WIDTH, GRID_HEIGHT
+from casrl.entity.spaceship.abstract_spaceship import AbstractSpaceship
+from casrl.entity.ufo.ufo_collection import UFOCollection
+from casrl.handler.statistics_handler import StatisticsHandler
 
 
-class Environment:
+class EnvironmentHandler:
 
-    def __init__(self, obstacles: Obstacles, agent: AbstractAgent, window: pygame.Surface):
-        self.obstacles = obstacles
+    def __init__(self, ufo_collection: UFOCollection, agent: AbstractSpaceship, window: pygame.Surface):
+        self.ufo_collection = ufo_collection
         self.agent = agent
         self.window = window
 
@@ -40,7 +39,7 @@ class Environment:
         )
         self.window.blit(spaceship, rect)
 
-        for obstacle in self.obstacles.obstacles:
+        for obstacle in self.ufo_collection.ufos:
             ufo = pygame.image.load('statics/images/ufo.png').convert_alpha()
             ufo = pygame.transform.smoothscale(
                 ufo,
@@ -59,7 +58,7 @@ class Environment:
             )
             self.window.blit(ufo, rect)
 
-        statistics = Statistics.instance()
+        statistics = StatisticsHandler.instance()
         self.window.blit(self.font.render(f"Episodes: {statistics.episode}", True, BLACK), (0, 0))
         self.window.blit(self.font.render(f"Number STAY: {statistics.n_of_stay_action}", True, BLACK), (0, 20))
         self.window.blit(self.font.render(f"Number LEFT: {statistics.n_of_left_action}", True, BLACK), (0, 40))
@@ -77,7 +76,7 @@ class Environment:
         pygame.display.flip()
 
     def save_rl_state(self, path):
-        self.obstacles.save_qtables(path)
+        self.ufo_collection.save_qtables(path)
 
     def load_rl_state(self, path):
-        self.obstacles.load_qtables(path)
+        self.ufo_collection.load_qtables(path)

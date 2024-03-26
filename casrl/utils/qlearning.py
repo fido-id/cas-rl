@@ -1,6 +1,6 @@
 import numpy as np
 
-from casrl.const import MOVEMENT_OFFSET, GRID_WIDTH, GRID_HEIGHT
+from casrl.utils.const import MOVEMENT_OFFSET, GRID_WIDTH, GRID_HEIGHT
 from casrl.enums.action import Action
 from casrl.entity.position import Position
 
@@ -44,10 +44,10 @@ class QLearning:
             )
 
     def update_qtable(
-        self, obstacle_position, player_position, action, reward, new_obstacle_position, is_terminal_state
+        self, prev_self_position, other_position, action, reward, self_position, is_terminal_state
     ):
-        angle = obstacle_position.angle_from(player_position)
-        new_angle = new_obstacle_position.angle_from(player_position)
+        angle = prev_self_position.angle_from(other_position)
+        new_angle = self_position.angle_from(other_position)
         if angle == 360:
             angle = 0
         if new_angle == 360:

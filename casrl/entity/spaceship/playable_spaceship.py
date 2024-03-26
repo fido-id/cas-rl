@@ -1,14 +1,14 @@
 import numpy as np
 import pygame
 
-from casrl.const import MOVEMENT_OFFSET, GRID_HEIGHT, GRID_WIDTH, AGENT_SIZE
-from casrl.entity.agent.abstract_agent import AbstractAgent
+from casrl.utils.const import MOVEMENT_OFFSET, GRID_HEIGHT, GRID_WIDTH
+from casrl.entity.spaceship.abstract_spaceship import AbstractSpaceship
 from casrl.entity.position import Position
 
 OFFSET = 1
 
 
-class PlayableAgent(AbstractAgent):
+class PlayableSpaceship(AbstractSpaceship):
     def __init__(self, size: int):
         self.size = size
         self._position = None

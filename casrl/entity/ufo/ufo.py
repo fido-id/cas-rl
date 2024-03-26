@@ -1,20 +1,18 @@
 import copy
-import math
 
 import numpy as np
 
 from casrl.enums.action import Action
-from casrl.const import GRID_HEIGHT, GRID_WIDTH, MOVEMENT_OFFSET, CAS_THRESHOLD
+from casrl.utils.const import GRID_HEIGHT, GRID_WIDTH, MOVEMENT_OFFSET, CAS_THRESHOLD
 from casrl.enums.outcome import Outcome
 from casrl.entity.position import Position
-from casrl.reward.abstract_reward import AbstractReward
-from casrl.entity.statistics import Statistics
-from casrl.qlearning import QLearning
-from casrl.reward.reward_npc import RewardNPC
+from casrl.handler.statistics_handler import StatisticsHandler
+from casrl.utils.qlearning import QLearning
+from casrl.reward.reward_ufo import RewardUFO
 
 
-class Obstacle:
-    def __init__(self, size: int, reward_function: RewardNPC):
+class UFO:
+    def __init__(self, size: int, reward_function: RewardUFO):
         self.position = None
         self.size = size
         self.reward_function = reward_function
@@ -28,7 +26,7 @@ class Obstacle:
         if self.position.distance_from(player_position) > CAS_THRESHOLD:
             return Outcome.NOOP.value
 
-        statistics = Statistics.instance()
+        statistics = StatisticsHandler.instance()
         prev_position = copy.copy(self.position)
         action = self.q.draw_action(self.position, player_position, is_deployed=is_deployed)
         match action:

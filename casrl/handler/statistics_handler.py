@@ -1,5 +1,5 @@
 
-class Statistics:
+class StatisticsHandler:
 
     _instance = None
     episode = 0

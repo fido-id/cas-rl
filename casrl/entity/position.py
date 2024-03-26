@@ -2,8 +2,7 @@ import math
 
 import numpy as np
 
-from casrl.const import GRID_WIDTH, GRID_HEIGHT
-from casrl.enums.action import Action
+from casrl.utils.const import GRID_WIDTH, GRID_HEIGHT
 
 
 class Position:

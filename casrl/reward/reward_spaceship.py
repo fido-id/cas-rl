@@ -1,13 +1,12 @@
-import math
 from typing import Tuple
 
-from casrl.const import GRID_WIDTH, GRID_HEIGHT
+from casrl.utils.const import GRID_WIDTH, GRID_HEIGHT
 from casrl.enums.outcome import Outcome
 from casrl.entity.position import Position
 from casrl.reward.abstract_reward import AbstractReward
 
 
-class RewardPlayer(AbstractReward):
+class RewardSpaceship(AbstractReward):
 
     def __init__(self, positive_reward: int, negative_reward: int, no_op_reward: int) -> None:
         super().__init__(positive_reward, negative_reward, no_op_reward)

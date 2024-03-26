@@ -1,12 +1,12 @@
 from typing import Tuple
 
-from casrl.const import GRID_WIDTH, GRID_HEIGHT, CAS_THRESHOLD
+from casrl.utils.const import GRID_WIDTH, GRID_HEIGHT
 from casrl.enums.outcome import Outcome
 from casrl.entity.position import Position
 from casrl.reward.abstract_reward import AbstractReward
 
 
-class RewardNPC(AbstractReward):
+class RewardUFO(AbstractReward):
 
     def __init__(self, positive_reward: int, negative_reward: int, no_op_reward: float) -> None:
         self.positive_reward = positive_reward

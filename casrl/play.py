@@ -2,15 +2,15 @@ import time
 
 import pygame
 
-from casrl.entity.agent.adversial_agent import AdversarialAgent
-from casrl.entity.agent.playable_agent import PlayableAgent
-from casrl.entity.environment import Environment
-from casrl.entity.obstacles import Obstacles
+from casrl.entity.spaceship.adversial_spaceship import AdversarialSpaceship
+from casrl.entity.spaceship.playable_spaceship import PlayableSpaceship
+from casrl.handler.environment import Environment
+from casrl.entity.ufo.ufo_collection import UFOCollection
 from casrl.enums.outcome import Outcome
-from casrl.reward.reward_player import RewardPlayer
-from casrl.reward.reward_npc import RewardNPC
-from casrl.entity.statistics import Statistics
-from const import SCREEN_WIDTH, EPISODES, OBSTACLE_SIZE, AGENT_SIZE, SCREEN_HEIGHT, ROOT_DIR
+from casrl.reward.reward_spaceship import RewardSpaceship
+from casrl.reward.reward_ufo import RewardUFO
+from casrl.handler.statistics import Statistics
+from casrl.utils.const import SCREEN_WIDTH, EPISODES, OBSTACLE_SIZE, AGENT_SIZE, SCREEN_HEIGHT, ROOT_DIR
 
 LOAD_STATE = True
 PLAY = True
@@ -25,14 +25,14 @@ pygame.display.set_caption("Collision Avoidance Simulation")
 window = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 clock = pygame.time.Clock()
 
-reward_player = RewardPlayer(positive_reward=100, negative_reward=-100, no_op_reward=-10)
-reward_npc = RewardNPC(positive_reward=100, negative_reward=-100, no_op_reward=-0.00000000001)
+reward_player = RewardSpaceship(positive_reward=100, negative_reward=-100, no_op_reward=-10)
+reward_npc = RewardUFO(positive_reward=100, negative_reward=-100, no_op_reward=-0.00000000001)
 
 if PLAY:
-    agent = PlayableAgent(size=AGENT_SIZE)
+    agent = PlayableSpaceship(size=AGENT_SIZE)
 else:
-    agent = AdversarialAgent(size=AGENT_SIZE, reward_function=reward_player)
-obstacles = Obstacles(n_obstacles=2, obstacle_size=OBSTACLE_SIZE, reward_function=reward_npc)
+    agent = AdversarialSpaceship(size=AGENT_SIZE, reward_function=reward_player)
+obstacles = UFOCollection(n_ufos=2, obstacle_size=OBSTACLE_SIZE, reward_function=reward_npc)
 
 environment = Environment(obstacles, agent, window)
 
