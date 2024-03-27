@@ -25,7 +25,7 @@ class Position:
         self.x = self.x + delta_x
         self.y = self.y + delta_y
 
-    def distance_from(self, other: 'Position'):
+    def distance_from(self, other: 'Position') -> float:
         return np.sqrt(
             np.power(
                 self.x + int(self.size / 2) - (other.x + int(other.size / 2)), 2
@@ -35,16 +35,19 @@ class Position:
             )
         )
 
-    def overlaps_with(self, other: 'Position'):
+    def overlaps_with(self, other: 'Position') -> bool:
         if self.x + self.size >= other.x and self.x <= other.x + other.size and \
                 self.y + self.size >= other.y and self.y <= other.y + other.size:
             return True
         return False
 
+    def is_out_of_bounds(self) -> bool:
+        return (
+            self.x <= 0 or self.x >= GRID_WIDTH - self.size or self.y <= 0 or self.y >= GRID_HEIGHT - self.size
+        )
+
     def angle_from(self, other: 'Position') -> int:
         return int(math.degrees(math.atan2(
-            (self.y + int(self.size/2)) - (other.y + int(self.size/2)),
-            (self.x + int(self.size/2)) - (other.x + int(self.size/2)))
+            (self.y + int(self.size / 2)) - (other.y + int(self.size / 2)),
+            (self.x + int(self.size / 2)) - (other.x + int(self.size / 2)))
         ) + 180)
-
-

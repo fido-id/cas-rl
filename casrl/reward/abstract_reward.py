@@ -13,11 +13,6 @@ class AbstractReward(ABC):
         self.negative_reward = negative_reward
         self.no_op_reward = no_op_reward
 
-    def is_terminal(self, reward) -> bool:
-        if reward == self.positive_reward or reward == self.negative_reward:
-            return True
-        return False
-
     @abstractmethod
-    def compute_reward_and_outcome(self, prev_self_position: Position, self_position: Position, other_position: Position) -> Tuple[int, Outcome]:
+    def compute_reward(self, prev_self_position: Position, self_position: Position, other_position: Position) -> Tuple[int, Outcome]:
         pass

@@ -2,13 +2,11 @@ import numpy as np
 import pygame
 
 from casrl.utils.const import MOVEMENT_OFFSET, GRID_HEIGHT, GRID_WIDTH
-from casrl.entity.spaceship.abstract_spaceship import AbstractSpaceship
+from casrl.entity.abstract_agent import AbstractAgent
 from casrl.entity.position import Position
 
-OFFSET = 1
 
-
-class PlayableSpaceship(AbstractSpaceship):
+class PlayableSpaceship(AbstractAgent):
     def __init__(self, size: int):
         self.size = size
         self._position = None
@@ -24,6 +22,7 @@ class PlayableSpaceship(AbstractSpaceship):
         if keys[pygame.K_d]:
             self.position.x = min(self.position.x + MOVEMENT_OFFSET, GRID_WIDTH - self.size)
 
+
     def reset(self):
         self._position = Position(
             np.random.randint(1, GRID_WIDTH - self.size),
@@ -37,7 +36,3 @@ class PlayableSpaceship(AbstractSpaceship):
             GRID_HEIGHT - 3,
             self.size
         )
-
-    @property
-    def position(self) -> Position:
-        return self._position

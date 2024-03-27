@@ -1,103 +1,108 @@
 import argparse
+import os
 import time
 
 import pygame
 
 from casrl.entity.spaceship.adversial_spaceship import AdversarialSpaceship
-from casrl.entity.spaceship.playable_spaceship import PlayableSpaceship
 from casrl.handler.environment_handler import EnvironmentHandler
 from casrl.entity.ufo.ufo_collection import UFOCollection
-from casrl.enums.outcome import Outcome
-from casrl.reward.reward_spaceship import RewardSpaceship
+from casrl.reward.reward_adversarial_spaceship import RewardAdversarialSpaceship
 from casrl.reward.reward_ufo import RewardUFO
 from casrl.handler.statistics_handler import StatisticsHandler
-from casrl.utils.const import SCREEN_WIDTH, EPISODES, OBSTACLE_SIZE, AGENT_SIZE, SCREEN_HEIGHT, ROOT_DIR
+from casrl.utils.const import SCREEN_WIDTH, OBSTACLE_SIZE, AGENT_SIZE, SCREEN_HEIGHT, ROOT_DIR
 
-LOAD_STATE = True
-PLAY = True
 
-now = time.strftime("%Y%m%d-%H%M")
-store_path = ROOT_DIR + f"/statics/states/{now}"
+def start_train(
+    store_state_path_dir_name: str | None,
+    load_state_path_dir_name: str | None,
+    n_ufos: int,
+    episodes: int
+):
+    if store_state_path_dir_name is None:
+        store_state_path_dir_name = time.strftime("%Y%m%d-%H%M")
+    store_path = os.path.join(ROOT_DIR, f"statics/states/{store_state_path_dir_name}")
 
-load_path = ROOT_DIR + f"/statics/states/20240323-1740"
+    pygame.init()
+    pygame.display.set_caption("Collision Avoidance Simulation")
+    window = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    clock = pygame.time.Clock()
 
-pygame.init()
-pygame.display.set_caption("Collision Avoidance Simulation")
-window = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-clock = pygame.time.Clock()
+    reward_player = RewardAdversarialSpaceship(positive_reward=100, negative_reward=-100, no_op_reward=-10)
+    reward_ufo = RewardUFO(positive_reward=100, negative_reward=-100, no_op_reward=-1e-10)
 
-reward_player = RewardSpaceship(positive_reward=100, negative_reward=-100, no_op_reward=-10)
-reward_npc = RewardUFO(positive_reward=100, negative_reward=-100, no_op_reward=-0.00000000001)
-
-if PLAY:
-    agent = PlayableSpaceship(size=AGENT_SIZE)
-else:
     agent = AdversarialSpaceship(size=AGENT_SIZE, reward_function=reward_player)
-obstacles = UFOCollection(n_ufos=2, obstacle_size=OBSTACLE_SIZE, reward_function=reward_npc)
+    ufo_collection = UFOCollection(n_ufos=n_ufos, obstacle_size=OBSTACLE_SIZE, reward_function=reward_ufo)
+    environment = EnvironmentHandler(ufo_collection, agent, window)
 
-environment = EnvironmentHandler(obstacles, agent, window)
+    if load_state_path_dir_name is not None:
+        # load state from a preatrained path
+        load_path = os.path.join(ROOT_DIR, f"statics/states/{load_state_path_dir_name}")
+        environment.load_rl_state(load_path)
 
-if LOAD_STATE:
-    environment.load_rl_state(load_path)
+    statistics = StatisticsHandler.instance()
 
-statistics = StatisticsHandler.instance()
+    for episode in range(episodes):
+        agent.reset()
+        ufo_collection.reset(agent.position)
 
-for episode in range(EPISODES):
-    agent.reset()
-    obstacles.reset(agent.position)
+        statistics.episode = episode
+        while True:
+            clock.tick(statistics.fps)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
 
-    statistics.episode = episode
-    episode_duration = 0
-    while True:
-        dt = clock.tick(statistics.fps)
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                exit()
+            # check for key presses
+            keys = pygame.key.get_pressed()
+            statistics.handle_fps_update(keys)
 
-        # check for key presses
-        keys = pygame.key.get_pressed()
+            closer_ufo_position = agent.get_other_position(ufo_collection)
+            agent_outcome, is_terminal_agent = agent.run_iteration(closer_ufo_position)
+            ufos_outcome, is_terminal_ufos = ufo_collection.run_iteration(agent.position)
+            environment.visualize_environment(load_pics=False)
 
-        if keys[pygame.K_q]:
-            statistics.fps = max(statistics.fps - 5, 1)
-        if keys[pygame.K_e]:
-            statistics.fps = statistics.fps + 5
+            statistics.handle_outcome_stats_update(ufos_outcome, agent_outcome)
 
-        if PLAY:
-            agent_outcome = agent.run_iteration(keys)
-        else:
-            agent_outcome = agent.run_iteration(obstacles)
+            if is_terminal_agent or is_terminal_ufos:
+                break
 
-        iteration_outcome = obstacles.run_iteration(agent.position, PLAY)
-        environment.visualize_environment()
+    environment.save_rl_state(store_path)
 
-        if Outcome.WIN.value in iteration_outcome or agent_outcome == Outcome.WIN.value:
-            statistics.n_win += 1
-            statistics.episode_durations_win.append(episode_duration)
-            break
-        if Outcome.OOO.value in iteration_outcome:
-            statistics.n_ooo_npc += 1
-            break
-        if agent_outcome == Outcome.OOO.value:
-            statistics.n_ooo_player += 1
-            break
-        if Outcome.COL.value in iteration_outcome or agent_outcome == Outcome.COL.value:
-            statistics.n_col += 1
-            break
+    pygame.quit()
 
-        episode_duration += 1
-
-environment.save_rl_state(store_path)
-
-# Close Pygame
-pygame.quit()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        prog='Collision Avoidance System PoC',
-        description='This script is used to train a number of qlearning agent to avoid collisions from another agent.',
+        prog="Collision Avoidance System PoC",
+        description="This script is used to train a number of qlearning agent to avoid collisions from another agent. "
+                    "The agent trying to escape will be UFOs, while the agent trying to collide with them will be a"
+                    "spaceship. The training will be done with an adversarial setting.",
     )
-    parser.add_argument("-sp", "--state-save-path", type=str,
+    parser.add_argument("-sp", "--save-path-to", type=str,
                         help="Path to the the folder containing the state of the agent. If not given, it will default "
                              "to the current time in YYYYMMDD-HHMM format",
                         dest="state_save_path")
+
+    parser.add_argument("-lp", "--load-pretrained-from", type=str, default=None,
+                        help="Path to the the folder containing the pretrained state of the agent. This is useful when"
+                             "we want to start train from an already trained episode",
+                        dest="state_load_path")
+
+    parser.add_argument("-nu", "--n-ufos", type=int, default=1,
+                        help="Number of ufos to spawn",
+                        dest="n_ufos")
+
+    parser.add_argument("-e", "--episodes", type=int, default=10000,
+                        help="Number of episodes to train for",
+                        dest="episodes")
+
+    args = parser.parse_args()
+
+    start_train(
+        store_state_path_dir_name=args.state_save_path,
+        load_state_path_dir_name=args.state_load_path,
+        n_ufos=args.n_ufos,
+        episodes=args.episodes
+    )

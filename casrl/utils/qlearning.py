@@ -11,16 +11,16 @@ class QLearning:
         self,
         state_size: tuple,
         n_possible_actions: int,
-        exploration_rate: float = 0.3,
-        learning_rate: float = 0.1,
-        discount_factor: float = 0.9
+        exploration_rate: float,
+        learning_rate: float,
+        discount_factor: float,
     ):
         self.qtable = np.zeros((*state_size, n_possible_actions), dtype=np.float32)
         self.exploration_rate = exploration_rate
         self.learning_rate = learning_rate
         self.discount_factor = discount_factor
 
-    def draw_action(self, self_position: Position, other_position: Position, is_deployed: bool = False) -> int:
+    def draw_action(self, self_position: Position, other_position: Position) -> int:
         angle = self_position.angle_from(other_position)
         if angle == 360:
             angle = 0
@@ -36,7 +36,7 @@ class QLearning:
         if self_position.y + MOVEMENT_OFFSET <= GRID_HEIGHT - self_position.size:
             potential_actions.append(Action.DOWN.value)
 
-        if np.random.rand() < self.exploration_rate and not is_deployed:
+        if np.random.rand() < self.exploration_rate:
             return np.random.choice(potential_actions)
         else:
             return np.argmax(
