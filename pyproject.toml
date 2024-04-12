@@ -1,0 +1,34 @@
+[tool.poetry]
+name = "casrl"
+version = "0.1.0"
+description = "Collision Avoidance System PoC with Q-Learning"
+authors = ["francescoalongi <fnc.alongi@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pygame = "^2.5.2"
+numpy = "^1.26.4"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.1.1"
+ruff = "^0.3.7"
+mypy = "^1.9.0"
+pytest-mock = "^3.14.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+lint.select = ["E", "F", "I", "N", "Q", "PT", "ANN", "W"]
+lint.ignore = [
+    "ANN101", # missing-type-self
+    "ANN102", # missing-type-cls
+    "ANN002", # missing-type-args
+    "ANN003", # missing-type-kwargs
+    "ANN401", # any-type in args and kwargs
+]
+line-length = 120
+target-version = "py311"
