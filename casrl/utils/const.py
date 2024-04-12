@@ -1,0 +1,15 @@
+import os
+
+SCREEN_WIDTH = 1040
+SCREEN_HEIGHT = 1040
+GRID_WIDTH = 40
+GRID_HEIGHT = 40
+SPACESHIP_SIZE = 2
+UFO_SIZE = 2
+MOVEMENT_OFFSET = 1
+CAS_THRESHOLD = 5
+ROOT_DIR = os.path.dirname(os.path.dirname(__file__))
+
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
