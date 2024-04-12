@@ -8,8 +8,7 @@ from casrl.utils.const import GRID_HEIGHT, GRID_WIDTH, MOVEMENT_OFFSET
 
 class PlayableSpaceship(AbstractAgent):
     def __init__(self, size: int) -> None:
-        self.size = size
-        self._position: None | Position = None
+        super().__init__(size)
         self.reset()
 
     def run_iteration(self, keys: pygame.key.ScancodeWrapper) -> None:
@@ -23,13 +22,7 @@ class PlayableSpaceship(AbstractAgent):
             self.position.x = min(self.position.x + MOVEMENT_OFFSET, GRID_WIDTH - self.size)
 
     def reset(self) -> None:
-        self._position = Position(
+        self.position = Position(
             np.random.randint(1, GRID_WIDTH - self.size),
             np.random.randint(1, GRID_HEIGHT - self.size),
-        )
-
-    def reset_to_fixed_pos(self) -> None:
-        self._position = Position(
-            np.random.randint(4, GRID_WIDTH - self.size - 4),
-            GRID_HEIGHT - 3,
         )

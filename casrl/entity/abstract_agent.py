@@ -32,6 +32,10 @@ class AbstractAgent(ABC):
         assert self._position is not None, "Position must be set before accessing position property"
         return self._position
 
+    @position.setter
+    def position(self, value: Position) -> None:
+        self._position = value
+
     def distance_from(self, other: "AbstractAgent") -> float:
         return np.sqrt(
             np.power(

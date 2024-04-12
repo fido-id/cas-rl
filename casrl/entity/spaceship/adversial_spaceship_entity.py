@@ -34,7 +34,7 @@ class AdversarialSpaceship(AbstractTrainableAgent):
         return closest_ufo
 
     def reset(self) -> None:
-        self._position = Position(
+        self.position = Position(
             np.random.randint(1, GRID_WIDTH - self.size),
             np.random.randint(1, GRID_HEIGHT - self.size),
         )

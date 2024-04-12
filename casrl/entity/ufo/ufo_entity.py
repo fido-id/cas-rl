@@ -41,7 +41,7 @@ class UFO(AbstractTrainableAgent):
 
         x_index = np.random.randint(len(potential_x_positions))
         y_index = np.random.randint(len(potential_y_positions))
-        self._position = Position(
+        self.position = Position(
             potential_x_positions[x_index].item(),
             potential_y_positions[y_index].item(),
         )
