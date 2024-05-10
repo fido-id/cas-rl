@@ -1,13 +1,13 @@
 
 
 <p align="center">
-  <img src="https://github.com/francescoalongi/cas-rl/assets/19633559/c2af4417-b22a-47c2-960e-a00e2050e830" alt="Logo" width="1000">
+  <img src="https://github.com/fido-id/cas-rl/assets/19633559/1bbf3fff-8096-4843-bdd1-cf79f3e2f895" alt="Logo" width="1000">
 </p>
 <h1 align="center">Collision Avoidance System PoC</h1>
 <p align="center">
-  <img alt="CI" src="https://github.com/francescoalongi/cas-rl/actions/workflows/code-quality-checks.yaml/badge.svg">
+  <img alt="CI" src="https://github.com/fido-id/cas-rl/actions/workflows/code-quality-checks.yaml/badge.svg">
   <img alt"Python version" src="https://img.shields.io/badge/python-3.11-blue">
-  <img alt"Coverage" src="https://raw.githubusercontent.com/francescoalongi/cas-rl/gh-pages/coverage.svg">
+  <img alt"Coverage" src="https://raw.githubusercontent.com/fido-id/cas-rl/gh-pages/coverage.svg">
 </p>
 
 
@@ -26,7 +26,7 @@ This repository contains a Proof of Concept (PoC) implementation of a Collision 
 
 ## 🚀 Preview
 
-![game](https://github.com/francescoalongi/cas-rl/assets/19633559/924dc689-6cb7-44d7-93b7-5d40d37e289b)
+![game](https://github.com/fido-id/cas-rl/assets/19633559/a1986275-a6bf-45f4-b0ec-db426884b04f)
 
 ## 🔎 Implementation details
 
@@ -53,7 +53,7 @@ To run the code successfully, ensure you have the following prerequisites:
 ## 🛠️ Installation
  1. Clone the repository
 ```bash
-git clone https://github.com/francescoalongi/cas-rl.git
+git clone https://github.com/fido-id/cas-rl.git
 ```
  2. Install the dependencies
 ```bash
