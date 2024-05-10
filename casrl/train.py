@@ -73,7 +73,7 @@ def start_train(
     pygame.quit()
 
 
-def start_script():
+def start_script() -> None:
     parser = argparse.ArgumentParser(
         prog="Collision Avoidance System PoC",
         description="This script is used to train a number of qlearning agent to avoid collisions from another agent. "

@@ -32,3 +32,15 @@ jobs:
       - name: Run tests
         run: |
           poetry run pytest tests
+
+      - name: Generate coverage badge
+        run: |
+          COVERAGE_PERCENTAGE=$(poetry run pytest --cov | awk '$1 == "TOTAL" {print $NF+0}')
+          mkdir coverage
+          curl -s "https://img.shields.io/badge/coverage-$COVERAGE_PERCENTAGE%25-brightgreen" > coverage/coverage.svg
+
+      - name: Host coverage badge on gh pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./coverage

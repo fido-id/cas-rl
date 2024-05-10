@@ -7,6 +7,7 @@
 <p align="center">
   <img alt="CI" src="https://github.com/francescoalongi/cas-rl/actions/workflows/code-quality-checks.yaml/badge.svg">
   <img alt"Python version" src="https://img.shields.io/badge/python-3.11-blue">
+  <img alt"Coverage" src="https://raw.githubusercontent.com/francescoalongi/cas-rl/gh-pages/coverage.svg">
 </p>
 
 
@@ -32,11 +33,17 @@ This repository contains a Proof of Concept (PoC) implementation of a Collision 
 This project utilizes Q-Learning as the learning algorithm for the Collision Avoidance System (CAS). The Q-Learning algorithm is a reinforcement learning technique that enables the CAS to learn optimal actions to avoid collisions based on previous experiences.
 
 ### Training Phase
-During the initial phase, termed as the training phase, the CAS learns to navigate the environment without user interaction. Upon execution, a Pygame window spawns, and the CAS undergoes training for a specified number of episodes. Throughout this phase, the CAS explores the environment and updates its action-value function using the [Q-Learning update rule](https://en.wikipedia.org/wiki/Q-learning#Algorithm). The action-value function represents the expected utility of taking a particular action in a given state, guiding the CAS towards making informed decisions to avoid collisions. During this phase, to optimize process, the graphics is not loaded. Moreover, it is possible to control the FPS using the keys Q and E of the keyboard. Pressing E increase the FPS making the training process faster, pressing Q decrease the FPS slowing down the training.
+During the initial phase, termed as the training phase, the CAS learns to navigate the environment without user interaction. Upon execution, a Pygame window spawns, and the CAS undergoes training for a specified number of episodes. Throughout this phase, the CAS explores the environment and updates its action-value function using the [Q-Learning update rule](https://en.wikipedia.org/wiki/Q-learning#Algorithm). The action-value function represents the expected utility of taking a particular action in a given state, guiding the CAS towards making informed decisions to avoid collisions. During this phase, to optimize process, the graphics is not loaded. Moreover, it is possible to control the FPS using the keys Q and E of the keyboard. Pressing E increases the FPS making the training process faster, pressing Q decreases the FPS slowing down the training.
 
 ### Gameplay
-Once the training phase concludes, users can engage in gameplay. The CAS, having learned from its training, now applies its acquired knowledge to navigate the environment and avoid collisions effectively. Users can interact with the CAS within the Pygame window, observing its intelligent decision-making process as it maneuvers through the environment. To control the spaceship the user can press the WASD set of keys to navigate the spaceship.
+Once the training phase concludes, users can engage in gameplay. The CAS, having learned from its training, now applies its acquired knowledge to navigate the environment and avoid collisions effectively. Users can interact with the CAS within the Pygame window, observing its intelligent decision-making process as it maneuvers through the environment. To control the spaceship the user can use the WASD set of keys.
 
+### Simplifications
+During project development, simplifications were made to focus on Q-learning:
+
+ - Episode Termination: When agents stray out of bounds, episodes end and new ones begin, ensuring training remains within the defined environment.
+ - Action Space: Limited to five dimensions (STAY, UP, DOWN, LEFT, and RIGHT), streamlining decision-making.
+ - Constant Speed: Entities maintain a fixed speed, removing complexities of acceleration and deceleration.
 
 ## 🪐 Requirements
 To run the code successfully, ensure you have the following prerequisites:

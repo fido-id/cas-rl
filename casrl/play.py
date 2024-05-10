@@ -55,7 +55,7 @@ def start_play(load_state_path_dir_name: str) -> None:
                 break
 
 
-def start_script():
+def start_script() -> None:
     parser = argparse.ArgumentParser(
         prog="Collision Avoidance System PoC",
         description="This script is used to play with a trained agent. The latter must avoid collision from a player "
