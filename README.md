@@ -32,15 +32,16 @@ This repository contains a Proof of Concept (PoC) implementation of a Collision 
 This project utilizes Q-Learning as the learning algorithm for the Collision Avoidance System (CAS). The Q-Learning algorithm is a reinforcement learning technique that enables the CAS to learn optimal actions to avoid collisions based on previous experiences.
 
 ### Training Phase
-During the initial phase, termed as the training phase, the CAS learns to navigate the environment without user interaction. Upon execution, a Pygame window spawns, and the CAS undergoes training for a specified number of episodes. Throughout this phase, the CAS explores the environment and updates its action-value function using the [Q-Learning update rule](https://en.wikipedia.org/wiki/Q-learning#Algorithm). The action-value function represents the expected utility of taking a particular action in a given state, guiding the CAS towards making informed decisions to avoid collisions.
+During the initial phase, termed as the training phase, the CAS learns to navigate the environment without user interaction. Upon execution, a Pygame window spawns, and the CAS undergoes training for a specified number of episodes. Throughout this phase, the CAS explores the environment and updates its action-value function using the [Q-Learning update rule](https://en.wikipedia.org/wiki/Q-learning#Algorithm). The action-value function represents the expected utility of taking a particular action in a given state, guiding the CAS towards making informed decisions to avoid collisions. During this phase, to optimize process, the graphics is not loaded. Moreover, it is possible to control the FPS using the keys Q and E of the keyboard. Pressing E increase the FPS making the training process faster, pressing Q decrease the FPS slowing down the training.
 
 ### Gameplay
-Once the training phase concludes, users can engage in gameplay. The CAS, having learned from its training, now applies its acquired knowledge to navigate the environment and avoid collisions effectively. Users can interact with the CAS within the Pygame window, observing its intelligent decision-making process as it maneuvers through the environment.
+Once the training phase concludes, users can engage in gameplay. The CAS, having learned from its training, now applies its acquired knowledge to navigate the environment and avoid collisions effectively. Users can interact with the CAS within the Pygame window, observing its intelligent decision-making process as it maneuvers through the environment. To control the spaceship the user can press the WASD set of keys to navigate the spaceship.
+
 
 ## 🪐 Requirements
 To run the code successfully, ensure you have the following prerequisites:
  - Python 3.11 or higher.
- - [Poetry](https://python-poetry.org/) installed for managing dependencies efficiently.
+ - [Poetry](https://python-poetry.org/) installed for managing dependencies and packaging efficiently.
 
 ## 🛠️ Installation
  1. Clone the repository
@@ -60,7 +61,7 @@ There are two main scripts: `train.py` and `play.py`. Before running the script 
 To start the training phase run:
 
 ```bash
-python3 train.py
+poetry run train
 ```
 
 There are some parameters that can be set, they are all listed in the `--help` of the script:
@@ -88,7 +89,7 @@ Once the `train.py` has finished with the execution, the script `play.py` can be
 To start the gameplay, run:
 
 ```bash
-python3 play.py
+poetry run play
 ```
 In this case, the only parameter that can be passed to the script is the path to the trained state in the previous step.
 
